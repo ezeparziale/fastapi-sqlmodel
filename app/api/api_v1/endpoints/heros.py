@@ -2,7 +2,9 @@ from sqlmodel import Session, select
 from fastapi import APIRouter, Depends, HTTPException, Response, status, Query
 
 from app.db.database import get_session
-from app.models import *
+from app.models import HeroRead, HeroCreate, HeroReadWithTeam, Hero, HeroUpdate 
+from typing import List, Optional
+
 
 router = APIRouter()
 

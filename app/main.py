@@ -8,7 +8,7 @@ from app.core.config import settings
 app = FastAPI()
 
 from app.db.database import engine
-from app.models import SQLModel
+from app.models.models import SQLModel
 SQLModel.metadata.create_all(engine)
 
 
