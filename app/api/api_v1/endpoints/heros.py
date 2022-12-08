@@ -1,10 +1,10 @@
-from sqlmodel import Session, select
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Query
-
-from app.db.database import get_session
-from app.models import HeroRead, HeroCreate, HeroReadWithTeam, Hero, HeroUpdate 
 from typing import List, Optional
 
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from sqlmodel import Session, select
+
+from app.db.database import get_session
+from app.models import Hero, HeroCreate, HeroRead, HeroReadWithTeam, HeroUpdate
 
 router = APIRouter()
 

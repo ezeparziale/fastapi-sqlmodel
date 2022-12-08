@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
 
+
 class TeamBase(SQLModel):
     name: str = Field(index=True)
     headquarters: str
