@@ -7,7 +7,7 @@ from app.models import *
 router = APIRouter()
 
 
-@router.post("/teams/", response_model=TeamRead)
+@router.post("/", response_model=TeamRead)
 def create_team(*, session: Session = Depends(get_session), team: TeamCreate):
     db_team = Team.from_orm(team)
     session.add(db_team)
@@ -16,7 +16,7 @@ def create_team(*, session: Session = Depends(get_session), team: TeamCreate):
     return db_team
 
 
-@router.get("/teams/", response_model=List[TeamRead])
+@router.get("/", response_model=List[TeamRead])
 def read_teams(
     *,
     session: Session = Depends(get_session),
@@ -27,7 +27,7 @@ def read_teams(
     return teams
 
 
-@router.get("/teams/{team_id}", response_model=TeamReadWithHeroes)
+@router.get("/{team_id}", response_model=TeamReadWithHeroes)
 def read_team(*, team_id: int, session: Session = Depends(get_session)):
     team = session.get(Team, team_id)
     if not team:
@@ -35,7 +35,7 @@ def read_team(*, team_id: int, session: Session = Depends(get_session)):
     return team
 
 
-@router.patch("/teams/{team_id}", response_model=TeamRead)
+@router.patch("/{team_id}", response_model=TeamRead)
 def update_team(
     *,
     session: Session = Depends(get_session),
@@ -54,7 +54,7 @@ def update_team(
     return db_team
 
 
-@router.delete("/teams/{team_id}")
+@router.delete("/{team_id}")
 def delete_team(*, session: Session = Depends(get_session), team_id: int):
     team = session.get(Team, team_id)
     if not team:
