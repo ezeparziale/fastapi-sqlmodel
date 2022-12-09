@@ -4,7 +4,10 @@ from fastapi.responses import RedirectResponse
 from app.api.api_v1.api import api_router
 from app.core.config import settings
 
-app = FastAPI()
+# FastAPI
+app = FastAPI(
+    title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
 
 from app.db.database import engine
 from app.models.models import SQLModel
