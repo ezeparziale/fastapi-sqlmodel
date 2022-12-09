@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
+
 class Settings(BaseSettings):
     # FastAPI
     API_V1_STR: str = "/api/v1"
@@ -34,7 +35,9 @@ class Settings(BaseSettings):
     SQLALCHEMY_TEST_DATABASE_URI: Optional[PostgresDsn] = None
 
     @validator("SQLALCHEMY_TEST_DATABASE_URI", pre=True)
-    def assemble_db_test_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+    def assemble_db_test_connection(
+        cls, v: Optional[str], values: Dict[str, Any]
+    ) -> Any:
         if isinstance(v, str):
             return v
         return PostgresDsn.build(

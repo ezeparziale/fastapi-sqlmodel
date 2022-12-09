@@ -1,8 +1,9 @@
 from fastapi.testclient import TestClient
-from app.models import Hero
 from sqlmodel import Session
 
-    
+from app.models import Hero
+
+
 def test_create_hero(client: TestClient):
     response = client.post(
         "/api/v1/heros/", json={"name": "Deadpond", "secret_name": "Dive Wilson"}

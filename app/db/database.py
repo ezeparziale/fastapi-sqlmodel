@@ -6,6 +6,7 @@ SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.POSTGRES_USER}:{settings.POST
 
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URI)
 
+
 def get_session():
     with Session(autocommit=False, autoflush=False, bind=engine) as session:
         yield session
