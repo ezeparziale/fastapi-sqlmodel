@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
+    POSTGRES_TEST_PORT: str
 
     SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
 
@@ -27,6 +28,21 @@ class Settings(BaseSettings):
             password=values.get("POSTGRES_PASSWORD"),
             host=values.get("POSTGRES_HOSTNAME"),
             port=values.get("POSTGRES_PORT"),
+            path=f"/{values.get('POSTGRES_DB') or ''}",
+        )
+
+    SQLALCHEMY_TEST_DATABASE_URI: Optional[PostgresDsn] = None
+
+    @validator("SQLALCHEMY_TEST_DATABASE_URI", pre=True)
+    def assemble_db_test_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+        if isinstance(v, str):
+            return v
+        return PostgresDsn.build(
+            scheme="postgresql",
+            user=values.get("POSTGRES_USER"),
+            password=values.get("POSTGRES_PASSWORD"),
+            host=values.get("POSTGRES_HOSTNAME") + "_test",
+            port=values.get("POSTGRES_TEST_PORT"),
             path=f"/{values.get('POSTGRES_DB') or ''}",
         )
 
