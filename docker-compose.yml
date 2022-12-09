@@ -18,6 +18,22 @@ services:
     networks:
       - fastapi_demo_net
 
+  postgres-test:
+    image: postgres:14.4
+    hostname: postgres_db_test
+    container_name: postgres_db_test
+    restart: always
+    ports:
+      - ${POSTGRES_TEST_PORT}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    # volumes:
+    #   - postgres-db-dev:/var/lib/postgresql/data
+    networks:
+      - fastapi_demo_net
+
   adminer:
     image: adminer:4.8.1
     hostname: adminer
@@ -27,6 +43,8 @@ services:
       - 8080:8080
     networks:
       - fastapi_demo_net
+
+
 
 # volumes:
 #   postgres-db-dev:
