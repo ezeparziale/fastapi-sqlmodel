@@ -1,12 +1,12 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
-from pydantic import BaseSettings, PostgresDsn, validator
-
+from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
 class Settings(BaseSettings):
     # FastAPI
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "FastAPI + SQLModel"
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
     # Database
     POSTGRES_HOSTNAME: str
