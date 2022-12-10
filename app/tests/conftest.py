@@ -26,3 +26,29 @@ def client_fixture(session: Session):
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def test_team_1(client):
+    json = {"name": "Justice League", "headquarters": "DC comics"}
+    response = client.post("/api/v1/teams/", json=json)
+    new_team = response.json()
+
+    assert response.status_code == 200
+    assert new_team["name"] == json["name"]
+    assert new_team["headquarters"] == json["headquarters"]
+    assert new_team["id"] is not None
+    return new_team
+
+
+@pytest.fixture
+def test_team_2(client):
+    json = {"name": "Teens Titans", "headquarters": "DC comics"}
+    response = client.post("/api/v1/teams/", json=json)
+    new_team = response.json()
+
+    assert response.status_code == 200
+    assert new_team["name"] == json["name"]
+    assert new_team["headquarters"] == json["headquarters"]
+    assert new_team["id"] is not None
+    return new_team
