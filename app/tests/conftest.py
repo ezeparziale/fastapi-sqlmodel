@@ -52,3 +52,39 @@ def test_team_2(client):
     assert new_team["headquarters"] == json["headquarters"]
     assert new_team["id"] is not None
     return new_team
+
+
+@pytest.fixture
+def test_hero_1(client, test_team_1):
+    json = {
+        "name": "Batman",
+        "secret_name": "Bruce Wayne",
+        "team_id": test_team_1["id"],
+    }
+    response = client.post("/api/v1/heros/", json=json)
+    new_hero = response.json()
+
+    assert response.status_code == 200
+    assert new_hero["name"] == json["name"]
+    assert new_hero["secret_name"] == json["secret_name"]
+    assert new_hero["id"] is not None
+    return new_hero
+
+
+@pytest.fixture
+def test_hero_2(client, test_team_1):
+    json = {
+        "name": "Superman",
+        "secret_name": "Clark Kent",
+        "age": 43,
+        "team_id": test_team_1["id"],
+    }
+    response = client.post("/api/v1/heros/", json=json)
+    new_hero = response.json()
+
+    assert response.status_code == 200
+    assert new_hero["name"] == json["name"]
+    assert new_hero["secret_name"] == json["secret_name"]
+    assert new_hero["age"] == json["age"]
+    assert new_hero["id"] is not None
+    return new_hero
