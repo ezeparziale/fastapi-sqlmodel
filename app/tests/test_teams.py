@@ -70,10 +70,10 @@ def test_update_team(session: Session, client: TestClient, test_team_1):
     assert data["id"] == test_team_1["id"]
 
 
-def test_delete_team(session: Session, client: TestClient, test_team_1):
-    response = client.delete(f"/api/v1/teams/{test_team_1['id']}")
+def test_delete_team(session: Session, client: TestClient, test_team_2):
+    response = client.delete(f"/api/v1/teams/{test_team_2['id']}")
 
-    team_in_db = session.get(Team, test_team_1["id"])
+    team_in_db = session.get(Team, test_team_2["id"])
 
     assert response.status_code == 200
     assert team_in_db is None

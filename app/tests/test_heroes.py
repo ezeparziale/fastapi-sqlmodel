@@ -14,22 +14,24 @@ def test_read_heroes(session: Session, client: TestClient, test_hero_1, test_her
     assert data[0]["secret_name"] == test_hero_1["secret_name"]
     assert data[0]["age"] == test_hero_1["age"]
     assert data[0]["id"] == test_hero_1["id"]
+    assert data[0]["team_id"] == test_hero_1["team_id"]
     assert data[1]["name"] == test_hero_2["name"]
     assert data[1]["secret_name"] == test_hero_2["secret_name"]
     assert data[1]["age"] == test_hero_2["age"]
     assert data[1]["id"] == test_hero_2["id"]
+    assert data[1]["team_id"] == test_hero_1["team_id"]
 
 
 def test_create_hero(client: TestClient):
     response = client.post(
-        "/api/v1/heros/", json={"name": "Batman", "secret_name": "Bruce Wayne"}
+        "/api/v1/heros/", json={"name": "Green Lantern", "secret_name": "Hal Jordan", "age": 50}
     )
     data = response.json()
 
     assert response.status_code == 200
-    assert data["name"] == "Batman"
-    assert data["secret_name"] == "Bruce Wayne"
-    assert data["age"] is None
+    assert data["name"] == "Green Lantern"
+    assert data["secret_name"] == "Hal Jordan"
+    assert data["age"] == 50
     assert data["id"] is not None
 
 
@@ -79,9 +81,9 @@ def test_update_hero(session: Session, client: TestClient):
     assert data["id"] == hero_1.id
 
 
-def test_delete_hero(session: Session, client: TestClient, test_hero_1):
-    response = client.delete(f"/api/v1/heros/{test_hero_1['id']}")
-    hero_in_db = session.get(Hero, test_hero_1["id"])
+def test_delete_hero(session: Session, client: TestClient, test_hero_2):
+    response = client.delete(f"/api/v1/heros/{test_hero_2['id']}")
+    hero_in_db = session.get(Hero, test_hero_2["id"])
 
     assert response.status_code == 200
     assert hero_in_db is None

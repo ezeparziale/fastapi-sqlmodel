@@ -7,7 +7,7 @@ from app.db.database import get_session
 from app.main import app
 
 
-@pytest.fixture(name="session")
+@pytest.fixture(name="session", scope="session")
 def session_fixture():
     engine = create_engine(settings.SQLALCHEMY_TEST_DATABASE_URI)
 
@@ -17,7 +17,7 @@ def session_fixture():
         yield session
 
 
-@pytest.fixture(name="client")
+@pytest.fixture(name="client", scope="session")
 def client_fixture(session: Session):
     def get_session_override():
         return session
@@ -28,7 +28,7 @@ def client_fixture(session: Session):
     app.dependency_overrides.clear()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session", autouse=True)
 def test_team_1(client):
     json = {"name": "Justice League", "headquarters": "DC comics"}
     response = client.post("/api/v1/teams/", json=json)
@@ -41,7 +41,7 @@ def test_team_1(client):
     return new_team
 
 
-@pytest.fixture
+@pytest.fixture(scope="session", autouse=True)
 def test_team_2(client):
     json = {"name": "Teens Titans", "headquarters": "DC comics"}
     response = client.post("/api/v1/teams/", json=json)
@@ -54,7 +54,7 @@ def test_team_2(client):
     return new_team
 
 
-@pytest.fixture
+@pytest.fixture(scope="session", autouse=True)
 def test_hero_1(client, test_team_1):
     json = {
         "name": "Batman",
@@ -71,7 +71,7 @@ def test_hero_1(client, test_team_1):
     return new_hero
 
 
-@pytest.fixture
+@pytest.fixture(scope="session", autouse=True)
 def test_hero_2(client, test_team_1):
     json = {
         "name": "Superman",
