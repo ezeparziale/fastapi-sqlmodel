@@ -1,6 +1,9 @@
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.heros import Hero, HeroRead
 
 
 class TeamBase(SQLModel):
@@ -30,9 +33,3 @@ class TeamUpdate(SQLModel):
 
 class TeamReadWithHeroes(TeamRead):
     heroes: List["HeroRead"] = []
-
-
-from app.models.heros import Hero, HeroRead
-
-Team.update_forward_refs()
-TeamReadWithHeroes.update_forward_refs()

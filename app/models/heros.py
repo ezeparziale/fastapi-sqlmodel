@@ -1,6 +1,9 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.teams import Team, TeamRead
 
 
 class HeroBase(SQLModel):
@@ -36,7 +39,7 @@ class HeroReadWithTeam(HeroRead):
     team: Optional["TeamRead"] = None
 
 
-from app.models.teams import Team, TeamRead
+# from app.models.teams import Team, TeamRead
 
-Hero.update_forward_refs()
-HeroReadWithTeam.update_forward_refs()
+# Hero.update_forward_refs()
+# HeroReadWithTeam.update_forward_refs()
