@@ -2,6 +2,19 @@ version: "3.9"
 
 services:
 
+  app:
+    hostname: app
+    container_name: app
+    build: .
+    ports: 
+      - 8000:8000
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+    networks:
+      - fastapi_demo_net
+
   postgres:
     image: postgres:14.4
     hostname: postgres_db
