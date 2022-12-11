@@ -11,11 +11,11 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - postgres
+      - db
     networks:
       - fastapi_demo_net
 
-  postgres:
+  db:
     image: postgres:14.4
     hostname: postgres_db
     container_name: postgres_db
@@ -31,7 +31,7 @@ services:
     networks:
       - fastapi_demo_net
 
-  postgres-test:
+  db-test:
     image: postgres:14.4
     hostname: postgres_db_test
     container_name: postgres_db_test
