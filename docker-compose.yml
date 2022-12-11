@@ -13,8 +13,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    # volumes:
-    #   - postgres-db-dev:/var/lib/postgresql/data
+    volumes:
+      - postgres-db-dev:/var/lib/postgresql/data
     networks:
       - fastapi_demo_net
 
@@ -29,8 +29,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
-    # volumes:
-    #   - postgres-db-dev:/var/lib/postgresql/data
+    volumes:
+      - postgres-db-test:/var/lib/postgresql/data
     networks:
       - fastapi_demo_net
 
@@ -45,9 +45,9 @@ services:
       - fastapi_demo_net
 
 
-
-# volumes:
-#   postgres-db-dev:
+volumes:
+  postgres-db-dev:
+  postgres-db-test:
 
 networks:
   fastapi_demo_net:
