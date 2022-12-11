@@ -24,7 +24,8 @@ def test_read_heroes(session: Session, client: TestClient, test_hero_1, test_her
 
 def test_create_hero(client: TestClient):
     response = client.post(
-        "/api/v1/heros/", json={"name": "Green Lantern", "secret_name": "Hal Jordan", "age": 50}
+        "/api/v1/heros/",
+        json={"name": "Green Lantern", "secret_name": "Hal Jordan", "age": 50},
     )
     data = response.json()
 
