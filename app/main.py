@@ -25,6 +25,7 @@ if settings.BACKEND_CORS_ORIGINS:
 # Routes
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
+
 # Doc redirect
 @app.get("/", include_in_schema=False)
 async def docs_redirect():
