@@ -25,8 +25,8 @@ def test_read_heroes(session: Session, client: TestClient, test_hero_1, test_her
 def test_create_hero(client: TestClient):
     response = client.post(
         "/api/v1/heros/",
-        json={"name": "Green Lantern", "secret_name": "Hal Jordan", "age": 50},  #nosec B106
-    )
+        json={"name": "Green Lantern", "secret_name": "Hal Jordan", "age": 50},
+    )  #nosec B106
     data = response.json()
 
     assert response.status_code == 200
@@ -71,8 +71,8 @@ def test_update_hero(session: Session, client: TestClient):
     session.commit()
 
     response = client.patch(
-        f"/api/v1/heros/{hero_1.id}", json={"secret_name": "Barry Allen"}  #nosec B106
-    )
+        f"/api/v1/heros/{hero_1.id}", json={"secret_name": "Barry Allen"}
+    )  #nosec B106
     data = response.json()
 
     assert response.status_code == 200
