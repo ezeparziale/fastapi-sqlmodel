@@ -66,7 +66,7 @@ def test_read_hero(session: Session, client: TestClient, test_hero_1):
 
 
 def test_update_hero(session: Session, client: TestClient):
-    hero_1 = Hero(name="Flash", secret_name="Jay Garrick")
+    hero_1 = Hero(name="Flash", secret_name="Jay Garrick")  #nosec B106
     session.add(hero_1)
     session.commit()
 
