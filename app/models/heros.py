@@ -39,7 +39,6 @@ class HeroReadWithTeam(HeroRead):
     team: Optional["TeamRead"] = None
 
 
-# from app.models.teams import Team, TeamRead
+from app.models.teams import Team, TeamRead
 
-# Hero.update_forward_refs()
-# HeroReadWithTeam.update_forward_refs()
+HeroReadWithTeam.update_forward_refs()

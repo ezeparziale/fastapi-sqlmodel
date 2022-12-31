@@ -33,3 +33,8 @@ class TeamUpdate(SQLModel):
 
 class TeamReadWithHeroes(TeamRead):
     heroes: List["HeroRead"] = []
+
+
+from app.models.heros import Hero, HeroRead
+
+TeamReadWithHeroes.update_forward_refs()
