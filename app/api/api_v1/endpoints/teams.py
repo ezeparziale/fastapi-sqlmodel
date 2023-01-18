@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
@@ -9,8 +9,8 @@ from app.models import Team, TeamCreate, TeamRead, TeamReadWithHeroes, TeamUpdat
 router = APIRouter()
 
 
-@router.post("/", response_model=TeamRead)
-def create_team(*, session: Session = Depends(get_session), team: TeamCreate):
+@router.post("/")
+def create_team(*, session: Session = Depends(get_session), team: TeamCreate) -> TeamRead:
     db_team = Team.from_orm(team)
     session.add(db_team)
     session.commit()
@@ -18,32 +18,32 @@ def create_team(*, session: Session = Depends(get_session), team: TeamCreate):
     return db_team
 
 
-@router.get("/", response_model=List[TeamRead])
+@router.get("/")
 def read_teams(
     *,
     session: Session = Depends(get_session),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
-):
+) -> List[TeamRead]:
     teams = session.exec(select(Team).offset(offset).limit(limit)).all()
     return teams
 
 
-@router.get("/{team_id}", response_model=TeamReadWithHeroes)
-def read_team(*, team_id: int, session: Session = Depends(get_session)):
+@router.get("/{team_id}")
+def read_team(*, team_id: int, session: Session = Depends(get_session)) -> TeamReadWithHeroes:
     team = session.get(Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     return team
 
 
-@router.patch("/{team_id}", response_model=TeamRead)
+@router.patch("/{team_id}")
 def update_team(
     *,
     session: Session = Depends(get_session),
     team_id: int,
     team: TeamUpdate,
-):
+) -> TeamRead:
     db_team = session.get(Team, team_id)
     if not db_team:
         raise HTTPException(status_code=404, detail="Team not found")
@@ -57,7 +57,7 @@ def update_team(
 
 
 @router.delete("/{team_id}")
-def delete_team(*, session: Session = Depends(get_session), team_id: int):
+def delete_team(*, session: Session = Depends(get_session), team_id: int) -> Any:
     team = session.get(Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
