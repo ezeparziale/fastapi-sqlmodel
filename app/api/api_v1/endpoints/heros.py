@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
@@ -9,8 +9,8 @@ from app.models import Hero, HeroCreate, HeroRead, HeroReadWithTeam, HeroUpdate
 router = APIRouter()
 
 
-@router.post("/", response_model=HeroRead)
-def create_hero(*, session: Session = Depends(get_session), hero: HeroCreate):
+@router.post("/")
+def create_hero(*, session: Session = Depends(get_session), hero: HeroCreate) -> HeroRead:
     db_hero = Hero.from_orm(hero)
     session.add(db_hero)
     session.commit()
@@ -18,29 +18,29 @@ def create_hero(*, session: Session = Depends(get_session), hero: HeroCreate):
     return db_hero
 
 
-@router.get("/", response_model=List[HeroRead])
+@router.get("/")
 def read_heroes(
     *,
     session: Session = Depends(get_session),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
-):
+) -> List[HeroRead]:
     heroes = session.exec(select(Hero).offset(offset).limit(limit)).all()
     return heroes
 
 
-@router.get("/{hero_id}", response_model=HeroReadWithTeam)
-def read_hero(*, session: Session = Depends(get_session), hero_id: int):
+@router.get("/{hero_id}")
+def read_hero(*, session: Session = Depends(get_session), hero_id: int) -> HeroReadWithTeam:
     hero = session.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
     return hero
 
 
-@router.patch("/{hero_id}", response_model=HeroRead)
+@router.patch("/{hero_id}")
 def update_hero(
     *, session: Session = Depends(get_session), hero_id: int, hero: HeroUpdate
-):
+) -> HeroRead:
     db_hero = session.get(Hero, hero_id)
     if not db_hero:
         raise HTTPException(status_code=404, detail="Hero not found")
@@ -54,7 +54,7 @@ def update_hero(
 
 
 @router.delete("/{hero_id}")
-def delete_hero(*, session: Session = Depends(get_session), hero_id: int):
+def delete_hero(*, session: Session = Depends(get_session), hero_id: int) -> Any:
 
     hero = session.get(Hero, hero_id)
     if not hero:
