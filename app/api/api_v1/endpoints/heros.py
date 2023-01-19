@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
@@ -10,7 +10,9 @@ router = APIRouter()
 
 
 @router.post("/")
-def create_hero(*, session: Session = Depends(get_session), hero: HeroCreate) -> HeroRead:
+def create_hero(
+    *, session: Session = Depends(get_session), hero: HeroCreate
+) -> HeroRead:
     db_hero = Hero.from_orm(hero)
     session.add(db_hero)
     session.commit()
@@ -30,7 +32,9 @@ def read_heroes(
 
 
 @router.get("/{hero_id}")
-def read_hero(*, session: Session = Depends(get_session), hero_id: int) -> HeroReadWithTeam:
+def read_hero(
+    *, session: Session = Depends(get_session), hero_id: int
+) -> HeroReadWithTeam:
     hero = session.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
