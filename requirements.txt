@@ -1,4 +1,4 @@
 fastapi[all]==0.95.2
 sqlmodel==0.0.8
 psycopg2==2.9.6
-alembic==1.9.2
+alembic==1.11.1
