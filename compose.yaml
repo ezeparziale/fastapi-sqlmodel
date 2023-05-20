@@ -9,15 +9,17 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - fastapi_demo_net
 
   db:
-    image: postgres:14.4
+    image: postgres:15.3
     hostname: postgres_db
     container_name: postgres_db
     restart: always
+    user: ${POSTGRES_USER}
     ports:
       - 5432:5432
     environment:
@@ -25,15 +27,21 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - postgres-db-dev:/var/lib/postgresql/data
+      - postgres-db:/var/lib/postgresql/data
     networks:
       - fastapi_demo_net
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db-test:
-    image: postgres:14.4
+    image: postgres:15.3
     hostname: postgres_db_test
     container_name: postgres_db_test
     restart: always
+    user: ${POSTGRES_USER}
     ports:
       - ${POSTGRES_TEST_PORT}:5432
     environment:
@@ -44,6 +52,11 @@ services:
       - postgres-db-test:/var/lib/postgresql/data
     networks:
       - fastapi_demo_net
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   adminer:
     image: adminer:4.8.1
@@ -57,7 +70,7 @@ services:
 
 
 volumes:
-  postgres-db-dev:
+  postgres-db:
   postgres-db-test:
 
 networks:
