@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 
 from app.core.config import settings
-from app.db.database import get_session
+from app.db.database import get_db
 from app.main import app
 
 
@@ -19,10 +19,10 @@ def session_fixture():
 
 @pytest.fixture(name="client", scope="session")
 def client_fixture(session: Session):
-    def get_session_override():
+    def get_db_override():
         return session
 
-    app.dependency_overrides[get_session] = get_session_override
+    app.dependency_overrides[get_db] = get_db_override
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()

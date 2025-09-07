@@ -3,16 +3,14 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
-from app.db.database import get_session
+from app.db.database import get_db
 from app.models import Hero, HeroCreate, HeroRead, HeroReadWithTeam, HeroUpdate
 
 router = APIRouter()
 
 
 @router.post("/")
-def create_hero(
-    *, session: Session = Depends(get_session), hero: HeroCreate
-) -> HeroRead:
+def create_hero(*, session: Session = Depends(get_db), hero: HeroCreate) -> HeroRead:
     db_hero = Hero.model_validate(hero)
     session.add(db_hero)
     session.commit()
@@ -23,7 +21,7 @@ def create_hero(
 @router.get("/")
 def read_heroes(
     *,
-    session: Session = Depends(get_session),
+    session: Session = Depends(get_db),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
 ) -> List[HeroRead]:
@@ -32,9 +30,7 @@ def read_heroes(
 
 
 @router.get("/{hero_id}")
-def read_hero(
-    *, session: Session = Depends(get_session), hero_id: int
-) -> HeroReadWithTeam:
+def read_hero(*, session: Session = Depends(get_db), hero_id: int) -> HeroReadWithTeam:
     hero = session.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
@@ -43,7 +39,7 @@ def read_hero(
 
 @router.patch("/{hero_id}")
 def update_hero(
-    *, session: Session = Depends(get_session), hero_id: int, hero: HeroUpdate
+    *, session: Session = Depends(get_db), hero_id: int, hero: HeroUpdate
 ) -> HeroRead:
     db_hero = session.get(Hero, hero_id)
     if not db_hero:
@@ -58,7 +54,7 @@ def update_hero(
 
 
 @router.delete("/{hero_id}")
-def delete_hero(*, session: Session = Depends(get_session), hero_id: int) -> Any:
+def delete_hero(*, session: Session = Depends(get_db), hero_id: int) -> Any:
 
     hero = session.get(Hero, hero_id)
     if not hero:

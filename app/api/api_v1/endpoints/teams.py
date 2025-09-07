@@ -3,16 +3,14 @@ from typing import Any, List
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 
-from app.db.database import get_session
+from app.db.database import get_db
 from app.models import Team, TeamCreate, TeamRead, TeamReadWithHeroes, TeamUpdate
 
 router = APIRouter()
 
 
 @router.post("/")
-def create_team(
-    *, session: Session = Depends(get_session), team: TeamCreate
-) -> TeamRead:
+def create_team(*, session: Session = Depends(get_db), team: TeamCreate) -> TeamRead:
     db_team = Team.model_validate(team)
     session.add(db_team)
     session.commit()
@@ -23,7 +21,7 @@ def create_team(
 @router.get("/")
 def read_teams(
     *,
-    session: Session = Depends(get_session),
+    session: Session = Depends(get_db),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
 ) -> List[TeamRead]:
@@ -33,7 +31,7 @@ def read_teams(
 
 @router.get("/{team_id}")
 def read_team(
-    *, team_id: int, session: Session = Depends(get_session)
+    *, team_id: int, session: Session = Depends(get_db)
 ) -> TeamReadWithHeroes:
     team = session.get(Team, team_id)
     if not team:
@@ -44,7 +42,7 @@ def read_team(
 @router.patch("/{team_id}")
 def update_team(
     *,
-    session: Session = Depends(get_session),
+    session: Session = Depends(get_db),
     team_id: int,
     team: TeamUpdate,
 ) -> TeamRead:
@@ -61,7 +59,7 @@ def update_team(
 
 
 @router.delete("/{team_id}")
-def delete_team(*, session: Session = Depends(get_session), team_id: int) -> Any:
+def delete_team(*, session: Session = Depends(get_db), team_id: int) -> Any:
     team = session.get(Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
