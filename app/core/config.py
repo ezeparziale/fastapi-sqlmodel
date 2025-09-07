@@ -19,8 +19,13 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "FastAPI + SQLModel"
-    SUMMARY: str = ""
-    DESCRIPTION: str = ""
+    SUMMARY: str = "A robust and modern backend with FastAPI and SQLModel."
+    DESCRIPTION: str = (
+        "This project is a production-ready template for building APIs. It leverages "
+        "the high performance of FastAPI, the simplicity and power of SQLModel for "
+        "database interactions (combining Pydantic and SQLAlchemy), and follows best "
+        "practices for project structure and dependency management."
+    )
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyHttpUrl] | str, BeforeValidator(parse_cors)
@@ -29,7 +34,7 @@ class Settings(BaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def all_cors_origins(self) -> list[str]:
-        return [str(origin).strip("/") for origin in settings.BACKEND_CORS_ORIGINS]
+        return [str(origin).strip("/") for origin in self.BACKEND_CORS_ORIGINS]
 
     # Database
     POSTGRES_HOSTNAME: str
