@@ -1,10 +1,9 @@
 services:
-
   app:
     hostname: app
     container_name: app
     build: .
-    ports: 
+    ports:
       - 8000:8000
     env_file:
       - ./.env
@@ -15,7 +14,7 @@ services:
       - fastapi_demo_net
 
   db:
-    image: postgres:15.3
+    image: postgres:17.6
     hostname: postgres_db
     container_name: postgres_db
     restart: always
@@ -31,13 +30,13 @@ services:
     networks:
       - fastapi_demo_net
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   db-test:
-    image: postgres:15.3
+    image: postgres:17.6
     hostname: postgres_db_test
     container_name: postgres_db_test
     restart: always
@@ -53,21 +52,23 @@ services:
     networks:
       - fastapi_demo_net
     healthcheck:
-      test: [ "CMD", "pg_isready" ]
+      test: ["CMD", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   adminer:
-    image: adminer:4.8.1
+    image: adminer:5.3.0
     hostname: adminer
     container_name: adminer
     restart: always
     ports:
       - 8080:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+      - ADMINER_DESIGN=hever
     networks:
       - fastapi_demo_net
-
 
 volumes:
   postgres-db:
