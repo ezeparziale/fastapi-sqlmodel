@@ -11,6 +11,7 @@ router = APIRouter()
 
 @router.post("/")
 def create_hero(*, db: Session = Depends(get_db), hero: HeroCreate) -> HeroRead:
+    """Create a new hero"""
     db_hero = Hero.model_validate(hero)
     db.add(db_hero)
     db.commit()
@@ -25,12 +26,14 @@ def read_heroes(
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
 ) -> List[HeroRead]:
+    """Retrieve heroes"""
     heroes = db.exec(select(Hero).offset(offset).limit(limit)).all()
     return heroes
 
 
 @router.get("/{hero_id}")
 def read_hero(*, db: Session = Depends(get_db), hero_id: int) -> HeroReadWithTeam:
+    """Get hero by ID"""
     hero = db.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
@@ -41,6 +44,7 @@ def read_hero(*, db: Session = Depends(get_db), hero_id: int) -> HeroReadWithTea
 def update_hero(
     *, db: Session = Depends(get_db), hero_id: int, hero: HeroUpdate
 ) -> HeroRead:
+    """Update a hero"""
     db_hero = db.get(Hero, hero_id)
     if not db_hero:
         raise HTTPException(status_code=404, detail="Hero not found")
@@ -55,7 +59,7 @@ def update_hero(
 
 @router.delete("/{hero_id}")
 def delete_hero(*, db: Session = Depends(get_db), hero_id: int) -> Any:
-
+    """Delete a hero"""
     hero = db.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
