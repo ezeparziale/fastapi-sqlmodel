@@ -7,21 +7,27 @@ if TYPE_CHECKING:
 
 
 class HeroBase(SQLModel):
-    name: str = Field(index=True)
-    secret_name: str
-    age: Optional[int] = Field(default=None, index=True)
+    name: str = Field(index=True, description="The name of the hero")
+    secret_name: str = Field(description="The secret name of the hero")
+    age: int | None = Field(default=None, index=True, description="The age of the hero")
 
-    team_id: Optional[int] = Field(default=None, foreign_key="team.id")
+    team_id: int | None = Field(
+        default=None,
+        foreign_key="team.id",
+        description="The ID of the team the hero belongs to",
+    )
 
 
 class Hero(HeroBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int | None = Field(
+        default=None, primary_key=True, description="The unique ID of the hero"
+    )
 
     team: Optional["Team"] = Relationship(back_populates="heroes")
 
 
 class HeroRead(HeroBase):
-    id: int
+    id: int = Field(description="The unique ID of the hero")
 
 
 class HeroCreate(HeroBase):
@@ -29,14 +35,20 @@ class HeroCreate(HeroBase):
 
 
 class HeroUpdate(SQLModel):
-    name: Optional[str] = None
-    secret_name: Optional[str] = None
-    age: Optional[int] = None
-    team_id: Optional[int] = None
+    name: str | None = Field(default=None, description="The name of the hero")
+    secret_name: str | None = Field(
+        default=None, description="The secret name of the hero"
+    )
+    age: int | None = Field(default=None, description="The age of the hero")
+    team_id: int | None = Field(
+        default=None, description="The ID of the team the hero belongs to"
+    )
 
 
 class HeroReadWithTeam(HeroRead):
-    team: Optional["TeamRead"] = None
+    team: Optional["TeamRead"] = Field(
+        default=None, description="The team the hero belongs to"
+    )
 
 
 from app.models.teams import Team, TeamRead
