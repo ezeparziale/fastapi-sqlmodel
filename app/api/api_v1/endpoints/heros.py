@@ -10,28 +10,28 @@ router = APIRouter()
 
 
 @router.post("/")
-def create_hero(*, session: Session = Depends(get_db), hero: HeroCreate) -> HeroRead:
+def create_hero(*, db: Session = Depends(get_db), hero: HeroCreate) -> HeroRead:
     db_hero = Hero.model_validate(hero)
-    session.add(db_hero)
-    session.commit()
-    session.refresh(db_hero)
+    db.add(db_hero)
+    db.commit()
+    db.refresh(db_hero)
     return db_hero
 
 
 @router.get("/")
 def read_heroes(
     *,
-    session: Session = Depends(get_db),
+    db: Session = Depends(get_db),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
 ) -> List[HeroRead]:
-    heroes = session.exec(select(Hero).offset(offset).limit(limit)).all()
+    heroes = db.exec(select(Hero).offset(offset).limit(limit)).all()
     return heroes
 
 
 @router.get("/{hero_id}")
-def read_hero(*, session: Session = Depends(get_db), hero_id: int) -> HeroReadWithTeam:
-    hero = session.get(Hero, hero_id)
+def read_hero(*, db: Session = Depends(get_db), hero_id: int) -> HeroReadWithTeam:
+    hero = db.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
     return hero
@@ -39,26 +39,26 @@ def read_hero(*, session: Session = Depends(get_db), hero_id: int) -> HeroReadWi
 
 @router.patch("/{hero_id}")
 def update_hero(
-    *, session: Session = Depends(get_db), hero_id: int, hero: HeroUpdate
+    *, db: Session = Depends(get_db), hero_id: int, hero: HeroUpdate
 ) -> HeroRead:
-    db_hero = session.get(Hero, hero_id)
+    db_hero = db.get(Hero, hero_id)
     if not db_hero:
         raise HTTPException(status_code=404, detail="Hero not found")
     hero_data = hero.dict(exclude_unset=True)
     for key, value in hero_data.items():
         setattr(db_hero, key, value)
-    session.add(db_hero)
-    session.commit()
-    session.refresh(db_hero)
+    db.add(db_hero)
+    db.commit()
+    db.refresh(db_hero)
     return db_hero
 
 
 @router.delete("/{hero_id}")
-def delete_hero(*, session: Session = Depends(get_db), hero_id: int) -> Any:
+def delete_hero(*, db: Session = Depends(get_db), hero_id: int) -> Any:
 
-    hero = session.get(Hero, hero_id)
+    hero = db.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
-    session.delete(hero)
-    session.commit()
+    db.delete(hero)
+    db.commit()
     return {"ok": True}

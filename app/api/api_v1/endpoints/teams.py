@@ -10,30 +10,28 @@ router = APIRouter()
 
 
 @router.post("/")
-def create_team(*, session: Session = Depends(get_db), team: TeamCreate) -> TeamRead:
+def create_team(*, db: Session = Depends(get_db), team: TeamCreate) -> TeamRead:
     db_team = Team.model_validate(team)
-    session.add(db_team)
-    session.commit()
-    session.refresh(db_team)
+    db.add(db_team)
+    db.commit()
+    db.refresh(db_team)
     return db_team
 
 
 @router.get("/")
 def read_teams(
     *,
-    session: Session = Depends(get_db),
+    db: Session = Depends(get_db),
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
 ) -> List[TeamRead]:
-    teams = session.exec(select(Team).offset(offset).limit(limit)).all()
+    teams = db.exec(select(Team).offset(offset).limit(limit)).all()
     return teams
 
 
 @router.get("/{team_id}")
-def read_team(
-    *, team_id: int, session: Session = Depends(get_db)
-) -> TeamReadWithHeroes:
-    team = session.get(Team, team_id)
+def read_team(*, team_id: int, db: Session = Depends(get_db)) -> TeamReadWithHeroes:
+    team = db.get(Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     return team
@@ -42,27 +40,27 @@ def read_team(
 @router.patch("/{team_id}")
 def update_team(
     *,
-    session: Session = Depends(get_db),
+    db: Session = Depends(get_db),
     team_id: int,
     team: TeamUpdate,
 ) -> TeamRead:
-    db_team = session.get(Team, team_id)
+    db_team = db.get(Team, team_id)
     if not db_team:
         raise HTTPException(status_code=404, detail="Team not found")
     team_data = team.dict(exclude_unset=True)
     for key, value in team_data.items():
         setattr(db_team, key, value)
-    session.add(db_team)
-    session.commit()
-    session.refresh(db_team)
+    db.add(db_team)
+    db.commit()
+    db.refresh(db_team)
     return db_team
 
 
 @router.delete("/{team_id}")
-def delete_team(*, session: Session = Depends(get_db), team_id: int) -> Any:
-    team = session.get(Team, team_id)
+def delete_team(*, db: Session = Depends(get_db), team_id: int) -> Any:
+    team = db.get(Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
-    session.delete(team)
-    session.commit()
+    db.delete(team)
+    db.commit()
     return {"ok": True}
