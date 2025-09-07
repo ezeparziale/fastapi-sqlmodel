@@ -86,5 +86,5 @@ def test_delete_hero(session: Session, client: TestClient, test_hero_2):
     response = client.delete(f"/api/v1/heros/{test_hero_2['id']}")
     hero_in_db = session.get(Hero, test_hero_2["id"])
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert hero_in_db is None

@@ -75,5 +75,5 @@ def test_delete_team(session: Session, client: TestClient, test_team_2):
 
     team_in_db = session.get(Team, test_team_2["id"])
 
-    assert response.status_code == 200
+    assert response.status_code == 204
     assert team_in_db is None
