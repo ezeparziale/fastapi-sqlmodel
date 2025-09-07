@@ -55,16 +55,23 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
+    # Database test
+    POSTGRES_HOSTNAME_TEST: str
+    POSTGRES_PORT_TEST: int = 5432
+    POSTGRES_USER_TEST: str
+    POSTGRES_PASSWORD_TEST: str
+    POSTGRES_DB_TEST: str
+
     @computed_field  # type: ignore[prop-decorator]
     @property
     def SQLALCHEMY_TEST_DATABASE_URI(self) -> MultiHostUrl:
         return MultiHostUrl.build(
             scheme="postgresql",
-            username=self.POSTGRES_USER,
-            password=self.POSTGRES_PASSWORD,
-            host=self.POSTGRES_HOSTNAME + "_test",
-            port=self.POSTGRES_PORT,
-            path=self.POSTGRES_DB,
+            username=self.POSTGRES_USER_TEST,
+            password=self.POSTGRES_PASSWORD_TEST,
+            host=self.POSTGRES_HOSTNAME_TEST,
+            port=self.POSTGRES_PORT_TEST,
+            path=self.POSTGRES_DB_TEST,
         )
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
