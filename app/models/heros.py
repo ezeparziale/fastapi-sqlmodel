@@ -41,4 +41,4 @@ class HeroReadWithTeam(HeroRead):
 
 from app.models.teams import Team, TeamRead
 
-HeroReadWithTeam.update_forward_refs()
+HeroReadWithTeam.model_rebuild()

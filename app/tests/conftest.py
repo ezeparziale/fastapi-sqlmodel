@@ -9,7 +9,7 @@ from app.main import app
 
 @pytest.fixture(name="session", scope="session")
 def session_fixture():
-    engine = create_engine(settings.SQLALCHEMY_TEST_DATABASE_URI)
+    engine = create_engine(settings.SQLALCHEMY_TEST_DATABASE_URI.unicode_string())
 
     SQLModel.metadata.drop_all(engine)
     SQLModel.metadata.create_all(engine)

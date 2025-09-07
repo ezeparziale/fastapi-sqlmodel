@@ -13,7 +13,7 @@ router = APIRouter()
 def create_team(
     *, session: Session = Depends(get_session), team: TeamCreate
 ) -> TeamRead:
-    db_team = Team.from_orm(team)
+    db_team = Team.model_validate(team)
     session.add(db_team)
     session.commit()
     session.refresh(db_team)
