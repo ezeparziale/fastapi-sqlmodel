@@ -1,56 +1,68 @@
-from typing import Any, Dict, List, Optional
+from typing import Annotated, Any, Literal
 
-from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
+from pydantic import AnyHttpUrl, BeforeValidator, PostgresDsn, computed_field
+from pydantic_core import MultiHostUrl
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def parse_cors(v: Any) -> list[str] | str:
+    if isinstance(v, str) and not v.startswith("["):
+        return [i.strip() for i in v.split(",")]
+    elif isinstance(v, list | str):
+        return v
+    raise ValueError(v)
 
 
 class Settings(BaseSettings):
     # FastAPI
+    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+    VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "FastAPI + SQLModel"
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    SUMMARY: str = ""
+    DESCRIPTION: str = ""
+
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyHttpUrl] | str, BeforeValidator(parse_cors)
+    ] = []
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def all_cors_origins(self) -> list[str]:
+        return [str(origin).strip("/") for origin in settings.BACKEND_CORS_ORIGINS]
 
     # Database
     POSTGRES_HOSTNAME: str
-    POSTGRES_PORT: str
+    POSTGRES_PORT: int = 5432
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
-    POSTGRES_TEST_PORT: str
 
-    SQLALCHEMY_DATABASE_URI: Optional[PostgresDsn] = None
-
-    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
-        if isinstance(v, str):
-            return v
-        return PostgresDsn.build(
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> MultiHostUrl:
+        return MultiHostUrl.build(
             scheme="postgresql",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_HOSTNAME"),
-            port=values.get("POSTGRES_PORT"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_HOSTNAME,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB,
         )
 
-    SQLALCHEMY_TEST_DATABASE_URI: Optional[PostgresDsn] = None
-
-    @validator("SQLALCHEMY_TEST_DATABASE_URI", pre=True)
-    def assemble_db_test_connection(
-        cls, v: Optional[str], values: Dict[str, Any]
-    ) -> Any:
-        if isinstance(v, str):
-            return v
-        return PostgresDsn.build(
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def SQLALCHEMY_TEST_DATABASE_URI(self) -> MultiHostUrl:
+        return MultiHostUrl.build(
             scheme="postgresql",
-            user=values.get("POSTGRES_USER"),
-            password=values.get("POSTGRES_PASSWORD"),
-            host=values.get("POSTGRES_HOSTNAME") + "_test",
-            port=values.get("POSTGRES_TEST_PORT"),
-            path=f"/{values.get('POSTGRES_DB') or ''}",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_HOSTNAME + "_test",
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB,
         )
 
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
-settings = Settings()
+settings = Settings()  # pyright: ignore
