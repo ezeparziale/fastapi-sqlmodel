@@ -40,13 +40,13 @@ services:
     hostname: postgres_db_test
     container_name: postgres_db_test
     restart: always
-    user: ${POSTGRES_USER}
+    user: ${POSTGRES_USER_TEST}
     ports:
       - ${POSTGRES_TEST_PORT}:5432
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER_TEST}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_TEST}
+      - POSTGRES_DB=${POSTGRES_DB_TEST}
     volumes:
       - postgres-db-test:/var/lib/postgresql/data
     networks:
