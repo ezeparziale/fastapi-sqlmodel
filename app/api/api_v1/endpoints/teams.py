@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import Session, select
 
 from app.db.database import get_db
@@ -61,11 +61,11 @@ def update_team(
 
 
 @router.delete("/{team_id}")
-def delete_team(*, db: Session = Depends(get_db), team_id: int) -> Any:
+def delete_team(*, db: Session = Depends(get_db), team_id: int) -> None:
     """Delete a team"""
     team = db.get(Team, team_id)
     if not team:
         raise HTTPException(status_code=404, detail="Team not found")
     db.delete(team)
     db.commit()
-    return {"ok": True}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlmodel import Session, select
 
 from app.db.database import get_db
@@ -58,11 +58,11 @@ def update_hero(
 
 
 @router.delete("/{hero_id}")
-def delete_hero(*, db: Session = Depends(get_db), hero_id: int) -> Any:
+def delete_hero(*, db: Session = Depends(get_db), hero_id: int) -> None:
     """Delete a hero"""
     hero = db.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
     db.delete(hero)
     db.commit()
-    return {"ok": True}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
